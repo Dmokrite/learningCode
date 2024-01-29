@@ -1,10 +1,12 @@
 import multer from "multer";
 import { createAuthorizeMiddleWare } from "../Middlewares/authorize.middleware";
 import { NextFunction, Router, Response, Request } from "express";
-import { deleteEntity, getAll, getById, handleFileUpload, insert, replace } from "../Database/utils";
+import { deleteEntity, getAll, getById, insert, replace } from "../Database/utils";
 import { EntityNotFoundError } from "../Errors/entity-not-found.error";
 import { ValidationMiddleware } from "../Middlewares/validation.middleware";
 import { body } from "express-validator";
+import { handleFileUpload } from "../Middlewares/mp3.middleware";
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
