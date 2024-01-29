@@ -4,8 +4,7 @@ import { NextFunction, Router, Response, Request } from "express";
 import { deleteEntity, getAll, getById, insert, replace } from "../Database/utils";
 import { EntityNotFoundError } from "../Errors/entity-not-found.error";
 import { ValidationMiddleware } from "../Middlewares/validation.middleware";
-import { body } from "express-validator";
-import { handleFileUpload } from "../Middlewares/mp3.middleware";
+import { handleFileUpload, uploadValidation } from "../Middlewares/mp3.middleware";
 
 
 const storage = multer.diskStorage({
@@ -43,14 +42,6 @@ soundRouter.get('/:id', createAuthorizeMiddleWare([]), async (request: Request, 
     }
     response.send(sound);
 });
-
-// Validation des fichiers téléchargés
-const uploadValidation = [
-    body('name').notEmpty(), // Vérifier que le champ 'name' n'est pas vide
-    body('category').notEmpty(), // Vérifier que le champ 'category' n'est pas vide
-    // Vérification du type de fichier (audio/mpeg)
-    body('files.*.mimetype').isIn(['audio/mpeg'])
-];
 
 soundRouter.post('/', configuredMulter.array('sound'), handleFileUpload, ...uploadValidation, ValidationMiddleware, async (_request, response) => {
     response.redirect('/sounds/list'); // Rediriger vers la liste des sons après l'ajout

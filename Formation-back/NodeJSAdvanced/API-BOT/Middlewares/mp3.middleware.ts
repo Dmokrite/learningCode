@@ -1,5 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { insert } from "../Database/utils";
+import { body } from "express-validator";
+
+// Validation des fichiers téléchargés
+export const uploadValidation = [
+    body('name').notEmpty(), // Vérifier que le champ 'name' n'est pas vide
+    body('category').notEmpty(), // Vérifier que le champ 'category' n'est pas vide
+    // Vérification du type de fichier (audio/mpeg)
+    body('files.*.mimetype').isIn(['audio/mpeg'])
+];
 
 export const handleFileUpload = async (req: Request, _res: Response, next: NextFunction) => {
     req.body.files = req.files as Express.Multer.File[]; // Ajouter le tableau de fichiers au corps de la requête
