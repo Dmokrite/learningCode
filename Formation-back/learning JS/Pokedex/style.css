@@ -1,0 +1,369 @@
+body{
+  background-color: rgb(148, 191, 219);
+}
+
+header{
+  background-color: #333;
+  padding: 10px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav{
+  margin: 0 auto;
+}
+
+nav a{
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+nav a.active{
+  color: rgb(148, 191, 219);
+}
+
+#refreshAPI{
+  /* Ajuster la taille de l'image si nécessaire */
+  width: 50px;
+  height: 50px;
+  /* Supprimer les bordures et le style du bouton */
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  animation: slideFromLeft 10s linear infinite;
+}
+
+@keyframes slideFromLeft{
+  0% {
+      transform: translateX(-150%);
+  }
+  100% {
+      transform: translateX(4000%);
+  }
+}
+
+#counter-container{
+  display: flex;
+  align-items: center;
+}
+
+#counter-container p{
+  margin: 0 20px;
+}
+
+#table{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.pokemon-table{
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pokemon-table td, .pokemon-table th{
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.pokemon-table th{
+  background-color: #333;
+  color: white;
+}
+
+.pokemon-table tbody tr:nth-child(odd){
+  background-color: #f9f9f9;
+}
+
+.modal{
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(11, 114, 191);
+  border: 10px solid white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+}
+
+.close{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#capture-button{
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: white;
+  color: rgb(11, 114, 191);
+  /* Animation de changement de couleur */
+  animation: shine 5s infinite alternate;
+}
+
+/* Définition de l'animation 'shine' */
+@keyframes shine{
+  from {
+    background-color: white; /* Couleur initiale du bouton */
+  }
+  to {
+    background-color: rgb(11, 114, 191); /* Couleur brillante du bouton */
+    color: white;
+  }
+}
+
+#error-container{
+  text-align: center;
+}
+
+#historique{
+  height: 85vh;
+}
+
+#historique h2{
+  text-align: center;
+}
+
+#caught-pokemons-list{
+  height: 84vh;
+}
+
+#captured-list{
+  list-style-type: none;
+  text-align: center;
+}
+
+#missed-list{
+  list-style-type: none;
+  text-align: center;
+}
+
+#released-list li{
+  text-align: center;
+  list-style-type: none;
+}
+
+/* Style de base pour la carte */
+.pokemon-card{
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: rgb(11, 114, 191);
+  width: 200px;
+  border: 5px solid white;
+  color: white;
+  /* Centrer le contenu dans la carte */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Style pour l'ID du Pokémon */
+.pokemon-card p:first-child{
+  font-weight: bold;
+}
+
+/* Style pour le nom du Pokémon */
+.pokemon-card p:last-child{
+  color: white;
+}
+
+/* Conteneur pour les cartes */
+#caught-pokemons-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+/* Style pour la nouvelle modal */
+.pokemon-modal{
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 80%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalContent{
+  display: flex;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(11, 114, 191);
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 15px;
+  text-align: center;
+  border: 10px solid white;
+  height: 800px;
+}
+
+.modalContent button{
+  background-color: rgb(191, 11, 11);
+  padding: 2px;
+  color: white;
+  border-radius: 5px;
+  border: 2px solid white;
+  width: 20px;
+  height: 25px;
+  cursor: pointer;
+}
+
+/* Style pour le contenu de la nouvelle modal */
+.pokemon-modal-content{
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  max-width: 300px;
+  text-align: center; /* Centrer le contenu */
+}
+
+#pokemon-modal-content{
+  color: white;
+  width: 500px;
+  height: 500px;
+}
+
+#pokemon-modal-content img{
+  width: 200px;
+  height: 200px;
+}
+
+#pokemon-modal-content textarea{
+  width: 400px;
+  height: 80px;
+  border-radius: 5px;
+}
+
+#pokemon-modal-content button{
+  display: flex;
+  margin: 10px auto;
+  width: 85px;
+  height: 40px;
+  padding: 2px;
+  text-align: center;
+  background-color: rgb(11, 114, 191);
+  cursor: pointer;
+}
+
+/* Style pour le bouton de fermeture de la nouvelle modal */
+.close-pokemon-modal{
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-pokemon-modal:hover,
+.close-pokemon-modal:focus{
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.loader-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(11, 114, 191);
+  z-index: 999;
+}
+
+.loader-container img{
+  width: 30%;
+  height: 30%;
+}
+
+.content{
+  display: none;
+}
+
+#historique{
+  color: white;
+  text-align: center;
+}
+
+#historique h2{
+  text-decoration: underline;
+  margin-top: 35px;
+  margin-bottom: 20px;
+}
+
+#historique li{
+  margin-bottom: 10px;
+  color: black;
+}
+
+.history-list li{
+  margin-right: 40px;
+}
+
+.user-cards{
+  display: flex;
+  margin-left: 200px;
+}
+
+.user-card{
+  margin: 0 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  background-color: #fff;
+  color: #333;
+  margin-left: 160px;
+}
+
+.footer-img{
+  height: 70px;
+  width: 150px;
+  margin-right: 10px;
+}
+
+footer-component{
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}

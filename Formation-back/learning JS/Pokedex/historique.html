@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="history.js" defer></script>
+    <script type="module" src="./components/header-component.js" defer></script>
+    <script type="module" src="./components/footer-component.js" defer></script>
+    <title>Pokémon Historique</title>
+</head>
+
+<body>
+    <header-component></header-component>
+    <section id="historique">
+        <h2>Historique des Capturé(e)s</h2>
+        <ul id="captured-list" class="history-list"></ul>
+
+        <h2>Historique des Raté(e)s</h2>
+        <ul id="missed-list" class="history-list"></ul>
+
+        <h2>Pokémon relaché(e)s</h2>
+        <ul id="released-list" class="history-list"></ul>
+    </section>
+    <footer-component>
+        <div class="footer">
+            <img class="footer-img" src="./img/pok.jpg" alt="Logo">
+        </div>
+        <div class="user-cards">
+            <div class="user-card">User 1</div>
+            <div class="user-card">User 2</div>
+            <div class="user-card">User 3</div>
+        </div>
+    </footer-component>
+</body>
+</html>
