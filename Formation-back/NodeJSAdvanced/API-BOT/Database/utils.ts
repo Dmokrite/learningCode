@@ -1,6 +1,5 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile, rm, writeFile } from "fs/promises";
 import { EntityNotFoundError } from "../Errors/entity-not-found.error";
-import { NextFunction, Request, Response, Router } from "express";
 
 async function readFileAndParseAsJson(fileName: string) {
     const stringifiedData = await readFile(`./Data/${fileName}.json`, 'utf8');
@@ -18,7 +17,11 @@ export async function getAll(modelName: string) {
 
 export async function getById(modelName: string, id: string) {
     const sounds = await readFileAndParseAsJson(modelName);
-    return sounds.find((obj: { id: number }) => obj.id === Number(id)); 
+    const foundEntity = sounds.find((obj: { id: string }) => obj.id == id); 
+    if (!foundEntity) {
+        throw new EntityNotFoundError();
+    }
+    return foundEntity;
 }
 
 export async function insert(modelName: string, body: Object) {
@@ -30,8 +33,11 @@ export async function insert(modelName: string, body: Object) {
 
 export async function replace(modelName: string, id: string, body: Object) {
     const data = await readFileAndParseAsJson(modelName);
-    const replaceIndex = data.findIndex((obj: { id: number }) => obj.id === Number(id));
+    const replaceIndex = data.findIndex((obj: { id: string }) => {
+        return obj.id === id;
+    });
     data[replaceIndex] = body;
+    console.log(data);
     await stringifyJsonAndOverWrite(modelName, data);
     return body;
 }
@@ -50,6 +56,16 @@ export async function update (modelName: string, id: string, body: Object) {
 export async function deleteEntity (modelName: string, id: string) {
     const data = await readFileAndParseAsJson(modelName);
     const toDeleteIndex = data.findIndex((obj: { id: string }) => obj.id === id);
-    data.splice(toDeleteIndex, 1);
+    // le splice retourne ce qui a été supprimé
+    const deleted = data.splice(toDeleteIndex, 1);
     await stringifyJsonAndOverWrite(modelName, data);
+    // vu qu'il n'y a qu'un élément qui a été supp, on retourne l'élément supprimé 0
+    return deleted[0];
+}
+
+export async function deleteSound (id: string) {
+    const deleted = await deleteEntity('sounds', id); // on supprime le son en DB
+    // pas oublier uploads/ devant
+    const deletedPath = `uploads/${deleted.file}`;
+    await rm(deletedPath);
 }
