@@ -42,11 +42,12 @@
 
             const data = await response.json();
             console.log(data);
-            // Stocke le token dans le localStorage
-            localStorage.setItem("token", data.token);
+
             // Show token pour l'exercice mais à ne surtout jamais faire
             //document.getElementById('message').innerText = `Token: ${data.token}`;
-            document.getElementById('message').innerText = `Token récupéré du localStorage`;
+            document.getElementById('message').innerText = `Token récupéré et stocké dans le localStorage`;
+            // Stocke le token dans le localStorage
+            localStorage.setItem("token", data.token);
             } catch (error) {
                 console.error("Erreur lors de la connexion:", error);
             }
