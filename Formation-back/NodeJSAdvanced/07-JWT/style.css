@@ -24,12 +24,14 @@ form {
 h1 {
     text-align: center;
     color: #333;
+    margin-left: 40px;
 }
 
 label {
     display: block;
     margin: 10px 0;
     color: #555;
+    text-align: center;
 }
 
 input {
@@ -52,6 +54,11 @@ button {
 
 button:hover {
     background-color: #45a049;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
 }
 
 p {

@@ -13,10 +13,12 @@
             <form enctype="multipart/form-data" method="post">
                 <div>
                     <label for="name">Entrez votre nom</label>
-                    <input id="name" type="text" name="name">
+                    <input id="name" type="text" name="name" required>
                     <label for="password">Entrez votre password</label>
-                    <input id="password" type="password" name="password">
-                    <button id="connect" type="submit">connection</button>
+                    <input id="password" type="password" name="password" required>
+                    <div class="btn">
+                    <button id="connect" type="submit">Sign in</button>
+                    </div>
                 </div>    
             </form>
         </li>
@@ -38,10 +40,13 @@
                     throw new Error(`Erreur HTTP! Statut: ${response.status}`);
                 }
 
-                const data = await response.json();
-                console.log(data);
-                // Show token pour l'exercice mais à ne surtout jamais faire
-                document.getElementById('message').innerText = `Token: ${data.token}`;
+            const data = await response.json();
+            console.log(data);
+            // Stocke le token dans le localStorage
+            localStorage.setItem("token", data.token);
+            // Show token pour l'exercice mais à ne surtout jamais faire
+            //document.getElementById('message').innerText = `Token: ${data.token}`;
+            document.getElementById('message').innerText = `Token récupéré du localStorage`;
             } catch (error) {
                 console.error("Erreur lors de la connexion:", error);
             }
@@ -52,7 +57,7 @@
             const name = document.getElementById('name').value;
             const password = document.getElementById('password').value;
             await login(name, password);
-        })
+        });
     </script>
 </body>
 </html>
