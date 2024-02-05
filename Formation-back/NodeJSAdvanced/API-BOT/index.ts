@@ -1,14 +1,20 @@
 import { Application, json } from "express";
 import express from "express";
-import { soundRouter } from "./Routers/sounds.router";
-import { loggerMiddleware } from "./Middlewares/logger.middleware";
-import { internalServerErrorHandler } from "./Error-Handler/internal-server-error.handler";
-import { notFoundErrorHandler } from "./Error-Handler/not-found-error.handler";
-import { NotFoundError } from "./Errors/not-found.error";
+import { soundRouter } from "./Api/routers/sounds.router";
+import { loggerMiddleware } from "./Api/Middlewares/logger.middleware";
+import { internalServerErrorHandler } from "./Api/Error-handler/internal-server-error.handler";
+import { notFoundErrorHandler } from "./Api/Error-handler/not-found-error.handler";
+import { NotFoundError } from "./Api/Errors/not-found.Error";
 import mustacheExpress from "mustache-express";
-import { userRouter } from "./Routers/users.router";
-import { DataSource } from "typeorm";
-import { seedUsers } from "./Seeders/main";
+import { userRouter } from "./Api/routers/users.router";
+import { DatabaseConnection } from "./Core/Database/connection";
+import { config } from "dotenv";
+import { authRouter } from "./Api/routers/auth.router";
+import cookieParser from 'cookie-parser';
+import { seeder } from "./Core/Database/seeder";
+import { rateLimit } from 'express-rate-limit';
+import { initApi } from "./Api";
+import { initBot } from "./Bot";
 
 // classes => PascalCase
 // function => camelCase
@@ -16,46 +22,26 @@ import { seedUsers } from "./Seeders/main";
 // constantes => SCREAMING_SNAKE_CASE
 // fichiers => kebab | camelCase | Pascal | ...
 
-const PORT = 8081;
-
-async function init() {
-    const connection = new DataSource({
-        host: 'localhost',
-        port: 3306,
-        database: 'bot',
-        username: 'bot',
-        password: 'bot',
-        type: 'mysql',
-        entities: ["Models/*.ts"]
+async function initApplication() {
+    config({
+        path: 'development.env'
     });
-    
-    await connection.initialize();
-    await connection.synchronize();
-    await seedUsers(connection.manager);
-    
-    const application: Application = express();
-    
-    application.engine('mustache', mustacheExpress());
-    application.set('view engine', 'mustache');
-    application.set('views', './Views');
-    
-    application.use(json());
-    application.use(loggerMiddleware);
-    application.use('/static', express.static(__dirname + '/uploads'));
-    application.use('/sounds', soundRouter);
-    application.use('/users', userRouter);
-    //override le comportement par défaut pour la 404
-    application.use((request, response, next) => {
-        throw new NotFoundError();
-    })
-    application.use(notFoundErrorHandler);
-    application.use(internalServerErrorHandler);
-    
-    
-    application.listen(PORT, () => {
-        console.log(`Prêt et à l\'écoute sur http://localhost:${PORT}`);
-    })
+
+    await DatabaseConnection.init();
+    const databaseInstance = DatabaseConnection.getConnection();
+
+
+    if (process.env.DB_REFRESH === "true") {
+        console.log("Refreshing de la DB ...");
+
+        await databaseInstance.dropDatabase();
+        await databaseInstance.synchronize();
+        await seeder();
+    }else{
+        await databaseInstance.synchronize();
+    }
+    await initBot();
+    initApi();
 }
 
-
-init();
+initApplication();
