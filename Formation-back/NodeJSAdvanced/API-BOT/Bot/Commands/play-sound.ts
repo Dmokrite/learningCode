@@ -1,13 +1,22 @@
+// Importe les modules nécessaires de discord.js/voice pour la gestion audio
 import { NoSubscriberBehavior, createAudioPlayer, createAudioResource, joinVoiceChannel } from "@discordjs/voice";
+// Importe les modules nécessaires de discord.js pour les interactions et les commandes
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+// Importe la fonction createReadStream pour lire les fichiers
 import { createReadStream } from "fs";
+// Importe la fonction join pour joindre des chemins de fichiers
 import { join } from "path";
+// Importe la fonction setTimeout pour retarder la suppression de la réponse éphémère
 import { setTimeout } from "timers/promises";
+// Importe la connexion à la base de données
 import { DatabaseConnection } from "../../Core/Database/connection";
+// Importe les fonctions de recherche de sons dans la base de données
 import { getSoundBy, searchSound } from "../../Core/Database/sounds";
 
+// Exporte le nom de la commande
 export const commandName = "play";
 
+// Exporte la fonction builder qui configure le constructeur de la commande
 export const builder = (builder: SlashCommandBuilder) => {
     return builder.setDescription('Joue un son')
         .addStringOption((o) => {
@@ -15,7 +24,7 @@ export const builder = (builder: SlashCommandBuilder) => {
                 .setName('sound')
                 .setDescription('Le nom du son')
                 .setRequired(true)
-                .setAutocomplete(true)
+                .setAutocomplete(true) // Active l'autocomplétion pour ce champ
         })
         .addNumberOption((o) => {
             return o
@@ -25,15 +34,17 @@ export const builder = (builder: SlashCommandBuilder) => {
         })
 }
 
+// Fonction de complétion automatique pour l'option 'sound'
 export async function autocomplete(interaction: AutocompleteInteraction) {
     const autocompleteString = interaction.options.getFocused(true);
 
     console.log(autocompleteString);
-    
 
     if (autocompleteString.name === "sound") {
+        // Recherche des sons correspondants dans la base de données
         const sounds = await searchSound(autocompleteString.value);
 
+        // Répond avec les suggestions de sons
         return interaction.respond(
             sounds.map((s) => ({
                 name: s.name,
@@ -43,30 +54,25 @@ export async function autocomplete(interaction: AutocompleteInteraction) {
     }
 }
 
-// execution de la commande
+// Fonction d'exécution de la commande
 export async function execute(interaction: CommandInteraction) {
+    // Récupère le canal vocal du membre qui a exécuté la commande
     const channel = (interaction.member as GuildMember).voice;
     const channelId = channel.channelId;
     const guildId = interaction.guildId;
 
-    // on récupère l'argument
+    // Récupère les arguments de la commande
     const soundName = interaction.options.get('sound')?.value as string;
     const volume = interaction.options.get('volume')?.value as number ?? 0.5;
 
     console.log(volume);
-    
 
+    // Vérifie si le membre est connecté à un canal vocal
     if (!channelId || !guildId) {
         return interaction.reply("Veuillez-vous connecter dans un channel pour cette commande");
     }
 
-    // const sound = await getSoundBy('name', soundName);
-
-
-    // if (!sound) {
-    //     return interaction.reply("Le son n'a pas été trouvé");
-    // }
-
+    // Rejoint le canal vocal du membre
     const voice = joinVoiceChannel({
         channelId,
         guildId,
@@ -75,42 +81,44 @@ export async function execute(interaction: CommandInteraction) {
         selfMute: false
     });
 
+    // Crée un lecteur audio pour jouer les sons
     const audioPlayer = createAudioPlayer({
         behaviors: {
             noSubscriber: NoSubscriberBehavior.Pause,
         },
     });
 
+    // Gère les erreurs du lecteur audio
     audioPlayer.on('error', error => {
         console.error(`Error: ${error.message} with resource ${error.resource.metadata}`);
     });
 
-    // ressource audio à jouer
+    // Crée une ressource audio à partir du fichier sonore spécifié
     const audioResource = createAudioResource(
         createReadStream(
             join(process.cwd(), 'uploads' , soundName)
         )
     );
 
+    // Gère les erreurs lors de la lecture du fichier audio
     audioResource.playStream.on("error", (e) => {
         console.log("Une erreur est survenue", e);
     });
 
-    // on set le volume à 50%
+    // Définit le volume du son à jouer
     audioResource.volume?.setVolume(volume);
 
-    // dit au son d'être joué
-    audioPlayer.play(
-        audioResource
-    );
+    // Joue le son avec le lecteur audio
+    audioPlayer.play(audioResource);
 
-    // on dit à la voix du bot d'écouter les sons à jouer de l'audioPlayer
+    // Connecte le lecteur audio au canal vocal
     voice.subscribe(audioPlayer);
     
+    // Répond à l'interaction avec un emoji et supprime la réponse après 1 seconde
     await interaction.reply({
         content: ':middle_finger:',
-        ephemeral: true
+        ephemeral: true // Le message n'est visible que par l'utilisateur qui a exécuté la commande
     });
     await setTimeout(1000);
-    await interaction.deleteReply();
+    await interaction.deleteReply(); // Supprime la réponse éphémère
 }
