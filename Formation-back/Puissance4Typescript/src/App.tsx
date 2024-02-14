@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react"; // Importe les hooks et composants nécessaires depuis React
 import Grille from "./grille"; // Importe le composant Grille depuis le fichier grille.tsx
-import Jeton from "./jeton"; // Importe le composant Jeton depuis le fichier jeton.tsx
+import Token from "./jeton"; // Importe le composant Jeton depuis le fichier jeton.tsx
 import { calculLine, CreateArrayOnPlay, verifyWinner, otherColor, chooseCorrectly } from "./utils"; // Importe les fonctions utilitaires depuis le fichier utils.ts
 import "./styles.css"; // Importe les styles CSS pour l'application
 
@@ -50,7 +50,7 @@ const App: React.FC = () => { // Définit le composant principal de l'applicatio
       }
       setArray(newArray as string[][]); // Met à jour l'état de la grille avec le nouveau tableau
       addToken( // Ajoute le jeton à l'état des jetons à afficher sur la grille
-        <Jeton key={`${x}-${y}`} couleur={currentColor} x={x} y={y} />
+        <Token key={`${x}-${y}`} color={currentColor} x={x} y={y} />
       );
       setCurrentColors(currentColor === "yellow" ? "red" : "yellow"); // Change la couleur actuelle du joueur
     },
